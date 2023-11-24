@@ -1,11 +1,13 @@
 package com.thoen.demoapi.controllers;
 
 import com.thoen.demoapi.dto.BrandDTO;
+import com.thoen.demoapi.dto.PageDTO;
 import com.thoen.demoapi.exception.ApiException;
 import com.thoen.demoapi.models.Brand;
 import com.thoen.demoapi.services.BrandService;
 import com.thoen.demoapi.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,22 +23,12 @@ public class BrandController {
     @Autowired
     private BrandService brandService;
 
+
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getAllBrand(){
+    public ResponseEntity<?> getAllBrand(){
         try {
             List<Brand> brands = brandService.getAllBrands();
-            Map<String, Object> response = new HashMap<>();
-            if (brands.isEmpty()){
-                response.put("brands", brands);
-                response.put("message", "Successfully");
-                response.put("status", HttpStatus.OK.value());
-                return ResponseEntity.ok(response);
-            } else {
-                response.put("brands", brands);
-                response.put("message", "Brands retrieved successfully");
-                response.put("status", HttpStatus.OK.value());
-                return ResponseEntity.ok(response);
-            }
+            return ResponseEntity.ok(brands);
         } catch (Exception e){
             throw new ApiException(HttpStatus.NOT_FOUND, "Brands not found");
         }
@@ -83,6 +75,39 @@ public class BrandController {
         } else {
             throw new ApiException(HttpStatus.NOT_FOUND, "Brand not found");
         }
+    }
+
+    @GetMapping("/name")
+    public ResponseEntity<Map<String, Object>> getBrandByName(@RequestParam String name){
+        List<Brand> brands = brandService.getBrandByName(name);
+        Map<String, Object> response = new HashMap<>();
+        if (brands.isEmpty()){
+            response.put("brands", brands);
+            response.put("message", "Successfully");
+            response.put("status", HttpStatus.OK.value());
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("brands", brands);
+            response.put("message", "Brands retrieved successfully");
+            response.put("status", HttpStatus.OK.value());
+            return ResponseEntity.ok(response);
+        }
+    }
+    @GetMapping("/")
+    public ResponseEntity<?> getFilter(@RequestParam Map<String, String> params){
+        List<Brand> brands = brandService.getFilter(params);
+        if (brands.isEmpty()){
+            throw new ApiException(HttpStatus.NOT_FOUND, "Brand not found");
+        } else {
+            return ResponseEntity.ok(brands);
+        }
+    }
+
+    @GetMapping( "/page")
+    public ResponseEntity<?> getAllBrands(@RequestParam Integer page, @RequestParam Integer size){
+        Page<Brand> brands = brandService.getBrandByPage(page, size);
+        PageDTO pageDTO = new PageDTO(brands);
+        return ResponseEntity.ok(pageDTO);
     }
 
 
