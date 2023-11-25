@@ -25,48 +25,49 @@ public class BrandService {
         return brandRepository.findAll();
     }
 
-    public Optional<Brand> getBrandById(Integer id){
+    public Optional<Brand> getBrandById(Integer id) {
         return brandRepository.findById(id);
     }
 
-    public Brand createBrand(Brand brand){
-        return  brandRepository.save(brand);
+    public Brand createBrand(Brand brand) {
+        return brandRepository.save(brand);
     }
 
-    public Brand updateBrand(Integer id, Brand brandUpdate){
-        return  brandRepository.findById(id).map(brand -> {
+    public Brand updateBrand(Integer id, Brand brandUpdate) {
+        return brandRepository.findById(id).map(brand -> {
             brand.setName(brandUpdate.getName());
             brand.setModel(brandUpdate.getModel());
-            return  brandRepository.save(brand);
+            return brandRepository.save(brand);
         }).orElse(null);
     }
 
-    public void deleteBrand(Integer id){
+    public void deleteBrand(Integer id) {
         brandRepository.findById(id).ifPresent(brandRepository::delete);
     }
 
-    public List<Brand> getBrandByName(String name){
+    public List<Brand> getBrandByName(String name) {
         return brandRepository.findByName(name);
     }
-    public List<Brand> getFilter(Map<String, String> params){
+
+    public List<Brand> getFilter(Map<String, String> params) {
         BrandFilter brandFilter = new BrandFilter();
-        if (params.containsKey("name")){
+        if (params.containsKey("name")) {
             brandFilter.setName(params.get("name"));
         }
-        if (params.containsKey("id")){
+        if (params.containsKey("id")) {
             brandFilter.setId(Integer.parseInt(params.get("id")));
         }
         BrandSpec brandSpec = new BrandSpec(brandFilter);
         return brandRepository.findAll(brandSpec);
     }
 
-    public Page<Brand> getBrandByPage(Integer page, Integer size){
+    public Page<Brand> getBrandByPage(Integer page, Integer size) {
         int pageLimit = PageUtil.DEFAULT_PAGE_LIMIT;
         int pageNumber = PageUtil.DEFAULT_PAGE_NUMBER;
-        if (page != null){
+        if (page != null) {
             pageNumber = page;
         }
-        if (size != null){
+        if (size != null) {
             pageLimit = size;
         }
         Pageable pageable = PageUtil.getPageable(pageNumber, pageLimit);
