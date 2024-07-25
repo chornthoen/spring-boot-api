@@ -21,7 +21,6 @@ public class BrandController {
 
     @Autowired
     private BrandService brandService;
-    
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllBrand() {
