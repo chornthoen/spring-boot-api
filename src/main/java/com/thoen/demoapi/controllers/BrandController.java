@@ -42,8 +42,8 @@ public class BrandController {
             throw new ApiException(HttpStatus.NOT_FOUND, "Brands not found");
         }
     }
-
     
+
     @PostMapping
     public ResponseEntity<?> createBrand(@RequestBody BrandDTO brandDTO) {
         Brand brand = Mapper.brandDTOToBrand(brandDTO);
