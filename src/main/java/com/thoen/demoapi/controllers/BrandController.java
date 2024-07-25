@@ -43,7 +43,6 @@ public class BrandController {
         }
     }
 
-    
     @PostMapping
     public ResponseEntity<?> createBrand(@RequestBody BrandDTO brandDTO) {
         Brand brand = Mapper.brandDTOToBrand(brandDTO);
