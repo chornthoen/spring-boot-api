@@ -76,6 +76,7 @@ public class ProductController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             throw new ApiException(HttpStatus.NOT_FOUND, "Product not found");
+
         }
     }
 
