@@ -4,9 +4,12 @@ import com.thoen.demoapi.exception.ApiException;
 import com.thoen.demoapi.models.Product;
 import com.thoen.demoapi.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.spring.data.rest.configuration.SpringDataRestConfiguration;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +20,7 @@ import java.util.Optional;
 @RequestMapping("/product")
 public class ProductController {
 
+
     @Autowired
     private ProductService productService;
     private final Map<String, Product> productMap = new HashMap<>();
@@ -24,11 +28,13 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllProducts() {
+
         List<Product> products = productService.getProductAll();
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Products retrieved successfully");
         response.put("status", HttpStatus.OK.value());
         response.put("data", products);
+        response.put("total", products.size());
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
@@ -36,11 +42,15 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getProductById(@PathVariable Long id) {
         Optional<Product> product = productService.getProductById(id);
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Product retrieved successfully");
-        response.put("status", HttpStatus.OK.value());
-        response.put("data", product);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        if (product.isPresent()) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Product retrieved successfully");
+            response.put("status", HttpStatus.OK.value());
+            response.put("data", product.get());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            throw new ApiException(HttpStatus.NOT_FOUND, "Product not found");
+        }
 
     }
 
@@ -57,9 +67,16 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
- 
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        return productService.updateProduct(id, product);
+    public ResponseEntity<Map<String, Object>> updateProduct(@PathVariable Long id, @RequestBody Product product) {
+        if (productService.getProductById(id).isPresent()) {
+            productService.updateProduct(id, product);
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Product updated successfully");
+            response.put("status", HttpStatus.OK.value());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            throw new ApiException(HttpStatus.NOT_FOUND, "Product not found");
+        }
     }
 
     @DeleteMapping("/{id}")
