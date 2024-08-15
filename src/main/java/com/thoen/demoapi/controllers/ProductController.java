@@ -4,12 +4,9 @@ import com.thoen.demoapi.exception.ApiException;
 import com.thoen.demoapi.models.Product;
 import com.thoen.demoapi.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.spring.data.rest.configuration.SpringDataRestConfiguration;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,11 +17,9 @@ import java.util.Optional;
 @RequestMapping("/product")
 public class ProductController {
 
-
     @Autowired
     private ProductService productService;
     private final Map<String, Product> productMap = new HashMap<>();
-
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllProducts() {
@@ -34,7 +29,6 @@ public class ProductController {
         response.put("message", "Products retrieved successfully");
         response.put("status", HttpStatus.OK.value());
         response.put("data", products);
-        response.put("total", products.size());
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
