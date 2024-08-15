@@ -19,6 +19,7 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+    
     private final Map<String, Product> productMap = new HashMap<>();
 
     @GetMapping
