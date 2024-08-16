@@ -1,5 +1,6 @@
 package com.thoen.demoapi.controllers;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import com.thoen.demoapi.exception.ApiException;
 import com.thoen.demoapi.models.Product;
 import com.thoen.demoapi.services.ProductService;
@@ -19,19 +20,31 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
-    
+
     private final Map<String, Product> productMap = new HashMap<>();
 
-    @GetMapping
-    public ResponseEntity<Map<String, Object>> getAllProducts() {
+    // @GetMapping
+    // public ResponseEntity<Map<String, Object>> getAllProducts() {
 
-        List<Product> products = productService.getProductAll();
+    //     List<Product> products = productService.getProductAll();
+    //     Map<String, Object> response = new HashMap<>();
+    //     response.put("message", "Products retrieved successfully");
+    //     response.put("status", HttpStatus.OK.value());
+    //     response.put("data", products);
+    //     return new ResponseEntity<>(response, HttpStatus.OK);
+
+    // }
+    @GetMapping()
+    public ResponseEntity<Map<String, Object>> getAllProducts(Pageable pageable) {
+        Page<Product> productPage = productService.getAllProducts(pageable);
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Products retrieved successfully");
         response.put("status", HttpStatus.OK.value());
-        response.put("data", products);
+        response.put("data", productPage.getContent());
+        response.put("currentPage", productPage.getNumber());
+        response.put("totalItems", productPage.getTotalElements());
+        response.put("totalPages", productPage.getTotalPages() - 1);
         return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
 
     @GetMapping("/{id}")

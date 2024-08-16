@@ -1,5 +1,6 @@
 package com.thoen.demoapi.services;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import com.thoen.demoapi.models.Product;
 import com.thoen.demoapi.repositories.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,8 +19,11 @@ public class ProductService {
     }
 
     //get all product
-    public List<Product> getProductAll() {
-        return productRepository.findAll();
+    // public List<Product> getProductAll() {
+    //     return productRepository.findAll();
+    // }
+        public Page<Product> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
     }
 
     //get by id
